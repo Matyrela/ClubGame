@@ -23,22 +23,23 @@ public class Movement : MonoBehaviour
         {
             playerClick = false;
             characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-            hammerUpRigid.constraints = RigidbodyConstraints2D.None;
+            hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
             hammerBottomRigid.constraints = RigidbodyConstraints2D.None;
+            
+            //----------------
+            characterRigid.angularVelocity = 0;
             characterRigid.velocity = Vector3.zero;
             hammerBottomRigid.angularVelocity = 0;
             hammerBottomRigid.velocity = Vector3.zero;
-            characterRigid.angularVelocity = 0;
-            hammerUpRigid.velocity = Vector3.zero;
             hammerUpRigid.angularVelocity = 0;
+            hammerUpRigid.velocity = Vector3.zero;
+            //----------------
 
             Vector3 direction = character.transform.position - hammer.transform.position;
             direction.Normalize();
 
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            character.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            Vector3 fore = Vector3.right * (force * 200);
-            characterRigid.AddForce(fore, ForceMode2D.Impulse);
+            Vector3 force2 = direction * (force * 200);
+            characterRigid.AddForce(force2, ForceMode2D.Impulse);
         }
         
         if (Input.GetMouseButton(0))
@@ -47,7 +48,7 @@ public class Movement : MonoBehaviour
             {
                 if (force < 1)
                 {
-                    force += 0.05f;
+                    force += 0.025f;
                 }
                 else
                 {
@@ -99,7 +100,17 @@ public class Movement : MonoBehaviour
         }
     }
 
-    public void onHammerHit()
+    public void RebotePared()
+    {
+        if (!playerClick)
+        {
+            Vector2 inverseForce = -hammerBottomRigid.velocity;
+            hammerBottomRigid.AddForce(inverseForce, ForceMode2D.Impulse);
+        }
+        
+    }
+
+    public void onHammerHit(Collider2D asd)
     {
         characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
         launchPlayer();
@@ -109,6 +120,7 @@ public class Movement : MonoBehaviour
     {
         canLaunch = true;
         playerClick = false;
+        hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
         force = 0;
     }
     
