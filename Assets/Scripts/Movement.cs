@@ -27,12 +27,12 @@ public class Movement : MonoBehaviour
             hammerBottomRigid.constraints = RigidbodyConstraints2D.None;
             
             //----------------
+            characterRigid.angularVelocity = 0;
             characterRigid.velocity = Vector3.zero;
             hammerBottomRigid.angularVelocity = 0;
             hammerBottomRigid.velocity = Vector3.zero;
-            characterRigid.angularVelocity = 0;
-            hammerUpRigid.velocity = Vector3.zero;
             hammerUpRigid.angularVelocity = 0;
+            hammerUpRigid.velocity = Vector3.zero;
             //----------------
 
             Vector3 direction = character.transform.position - hammer.transform.position;
@@ -113,9 +113,6 @@ public class Movement : MonoBehaviour
     public void onHammerHit(Collider2D asd)
     {
         characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-        Vector3 triggerPosition = asd.gameObject.transform.position;
-        Vector3 newPosition = new Vector3(triggerPosition.x, triggerPosition.y + 0.01f, triggerPosition.z);
-        hammer.transform.position = newPosition;
         launchPlayer();
     }
     
@@ -123,6 +120,7 @@ public class Movement : MonoBehaviour
     {
         canLaunch = true;
         playerClick = false;
+        hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
         force = 0;
     }
     
