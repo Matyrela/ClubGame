@@ -6,7 +6,7 @@ public class PlayerDetector : MonoBehaviour
 {
     [SerializeField] Movement player;
 
-    private void OnCollisionEnter2D(Collision2D col)
+    private void OnTriggerEnter2D(Collider2D col)
     {
         player.onPlayerHit();
     }
