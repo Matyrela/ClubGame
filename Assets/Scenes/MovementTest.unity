@@ -193,7 +193,7 @@ HingeJoint2D:
   m_BreakTorque: Infinity
   m_AutoConfigureConnectedAnchor: 1
   m_Anchor: {x: -0.00833337, y: -0.49590376}
-  m_ConnectedAnchor: {x: 0.01656906, y: -0.011992872}
+  m_ConnectedAnchor: {x: 0.016568912, y: -0.011992869}
   m_UseMotor: 0
   m_Motor:
     m_MotorSpeed: 0
@@ -697,7 +697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1485843ada21724488a9ebf83b2e3477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 1957644538}
 --- !u!1 &1151385419
 GameObject:
   m_ObjectHideFlags: 0
@@ -1164,8 +1164,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1301404808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.008, y: -4.2768, z: 0}
-  m_LocalScale: {x: 22.434486, y: 1.8335, z: 1}
+  m_LocalPosition: {x: 4.5316, y: -4.2768, z: 0}
+  m_LocalScale: {x: 31.513723, y: 1.8335, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1930221846}
@@ -1576,7 +1576,7 @@ DistanceJoint2D:
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: -0.003968728, y: 0.49835375}
   m_AutoConfigureDistance: 1
-  m_Distance: 0.024418784
+  m_Distance: 0.019467443
   m_MaxDistanceOnly: 0
 --- !u!50 &1675345688
 Rigidbody2D:
@@ -1859,6 +1859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   force: 0
+  usedForce: 0
   canLaunch: 1
   playerClick: 0
   forceSlider: {fileID: 565226880}

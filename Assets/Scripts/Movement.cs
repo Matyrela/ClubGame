@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private float force = 0;
+    [SerializeField] private float usedForce;
     public bool canLaunch = true;
     public bool playerClick = false;
 
@@ -62,9 +63,12 @@ public class Movement : MonoBehaviour
             {
                 if (canLaunch)
                 {
+                    Debug.Log("im in force > 0");
                     canLaunch = false;
                     playerClick = false;
+                    usedForce = force;
                     launchHammer();
+                    force = 0;
                 }
             }
             else
@@ -80,9 +84,9 @@ public class Movement : MonoBehaviour
     {
         characterRigid.constraints = RigidbodyConstraints2D.FreezeAll;
         
-        Debug.Log("Applied Troque to Hammer: " + force * 5000);
+        Debug.Log("Applied Troque to Hammer: " + usedForce * 5000);
         
-        Vector2 torq = (hammerBottomRigid.transform.right * (force * 5000));
+        Vector2 torq = (hammerBottomRigid.transform.right * (usedForce * 5000));
         hammerBottomRigid.AddForce(torq * getTorqueDir());
     }
     
@@ -90,12 +94,13 @@ public class Movement : MonoBehaviour
     {
         if (!canLaunch)
         {
-            playerClick = true;
             hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeAll;
+            characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+            playerClick = true;
         
-            Debug.Log("Applied Troque to Player: " + force * 5000);
+            Debug.Log("Applied Troque to Player: " + usedForce * 5000);
         
-            Vector2 torq = (characterRigid.transform.up * (force * 5000));
+            Vector2 torq = (characterRigid.transform.up * (usedForce * 5000));
             characterRigid.AddForce(torq * (getTorqueDir() * -1));
         }
     }
@@ -112,7 +117,7 @@ public class Movement : MonoBehaviour
 
     public void onHammerHit(Collider2D asd)
     {
-        characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+        hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeAll;
         launchPlayer();
     }
     
