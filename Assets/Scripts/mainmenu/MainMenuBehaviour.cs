@@ -9,4 +9,8 @@ public class MainMenuBehaviour : MonoBehaviour
     public void startGame(){
         SceneManager.LoadScene("MovementTest");
     }
+    public void quitGame()
+    {
+        Application.Quit();
+    }
 }
