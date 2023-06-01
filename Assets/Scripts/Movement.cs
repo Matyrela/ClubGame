@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,8 @@ public class Movement : MonoBehaviour
     public bool playerClick = false;
 
     [SerializeField] private Slider forceSlider;
+    [SerializeField] private Image clickSign;
+    [SerializeField] private TMP_Text forceText;
     
     [SerializeField] private Rigidbody2D characterRigid;
     [SerializeField] private Rigidbody2D hammerBottomRigid;
@@ -19,9 +22,12 @@ public class Movement : MonoBehaviour
     [SerializeField] private GameObject hammer;
     void FixedUpdate()
     {
+        forceText.text = force + "";
+        
         if (playerClick && Input.GetMouseButton(0))
         {
             playerClick = false;
+            clickSign.color = Color.red;
             characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
             hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
             hammerBottomRigid.constraints = RigidbodyConstraints2D.None;
@@ -40,6 +46,8 @@ public class Movement : MonoBehaviour
 
             Vector3 force2 = direction * (force * 200);
             characterRigid.AddForce(force2, ForceMode2D.Impulse);
+            
+            force = 0;
         }
         
         if (Input.GetMouseButton(0))
@@ -64,6 +72,7 @@ public class Movement : MonoBehaviour
                 {
                     canLaunch = false;
                     playerClick = false;
+                    clickSign.color = Color.red;
                     launchHammer();
                 }
             }
@@ -91,6 +100,8 @@ public class Movement : MonoBehaviour
         if (!canLaunch)
         {
             playerClick = true;
+            clickSign.color = Color.green;
+
             hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeAll;
         
             Debug.Log("Applied Troque to Player: " + force * 5000);
@@ -120,6 +131,7 @@ public class Movement : MonoBehaviour
     {
         canLaunch = true;
         playerClick = false;
+        clickSign.color = Color.red;
         hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
         force = 0;
     }
