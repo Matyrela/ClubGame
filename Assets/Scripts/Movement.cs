@@ -1,55 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private float force = 0;
+    public float force = 0;
     public bool canLaunch = true;
     public bool playerClick = false;
 
-    [SerializeField] private Slider forceSlider;
-    [SerializeField] private Image clickSign;
-    [SerializeField] private TMP_Text forceText;
-    
     [SerializeField] private Rigidbody2D characterRigid;
     [SerializeField] private Rigidbody2D hammerBottomRigid;
     [SerializeField] private Rigidbody2D hammerUpRigid;
 
     [SerializeField] private GameObject character;
     [SerializeField] private GameObject hammer;
-    void FixedUpdate()
+
+    private void FixedUpdate()
     {
-        forceText.text = force + "";
-        
         if (playerClick && Input.GetMouseButton(0))
         {
-            playerClick = false;
-            clickSign.color = Color.red;
-            characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-            hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-            hammerBottomRigid.constraints = RigidbodyConstraints2D.None;
-            
-            //----------------
-            characterRigid.angularVelocity = 0;
-            characterRigid.velocity = Vector3.zero;
-            hammerBottomRigid.angularVelocity = 0;
-            hammerBottomRigid.velocity = Vector3.zero;
-            hammerUpRigid.angularVelocity = 0;
-            hammerUpRigid.velocity = Vector3.zero;
-            //----------------
+            ResetRigidbody(characterRigid);
+            ResetRigidbody(hammerBottomRigid);
+            ResetRigidbody(hammerUpRigid);
+
+            ResetConstraints(characterRigid);
+            ResetConstraints(hammerUpRigid);
 
             Vector3 direction = character.transform.position - hammer.transform.position;
             direction.Normalize();
+            Vector3 forceVector = direction * (force * 200);
+            characterRigid.AddForce(forceVector, ForceMode2D.Impulse);
 
-            Vector3 force2 = direction * (force * 200);
-            characterRigid.AddForce(force2, ForceMode2D.Impulse);
-            
             force = 0;
+            playerClick = false;
         }
-        
+
         if (Input.GetMouseButton(0))
         {
             if (canLaunch)
@@ -72,8 +57,7 @@ public class Movement : MonoBehaviour
                 {
                     canLaunch = false;
                     playerClick = false;
-                    clickSign.color = Color.red;
-                    launchHammer();
+                    LaunchHammer();
                 }
             }
             else
@@ -81,67 +65,89 @@ public class Movement : MonoBehaviour
                 force = 0;
             }
         }
-        
-        forceSlider.value = force;
     }
 
-    void launchHammer()
+    private void LaunchHammer()
     {
         characterRigid.constraints = RigidbodyConstraints2D.FreezeAll;
-        
-        Debug.Log("Applied Troque to Hammer: " + force * 5000);
-        
-        Vector2 torq = (hammerBottomRigid.transform.right * (force * 5000));
-        hammerBottomRigid.AddForce(torq * getTorqueDir());
+
+        Debug.Log("Applied Torque to Hammer: " + force * 5000);
+
+        Vector2 torque = hammerBottomRigid.transform.right * (force * 5000);
+        hammerBottomRigid.AddForce(torque * GetTorqueDir());
     }
-    
-    void launchPlayer()
+
+    private void ResetRigidbody(Rigidbody2D rigidbody)
+    {
+        rigidbody.angularVelocity = 0;
+        rigidbody.velocity = Vector2.zero;
+    }
+
+    private void ResetConstraints(Rigidbody2D rigidbody)
+    {
+        rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Hammer"))
+        {
+            characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+            LaunchPlayer();
+        }
+    }
+
+    private void LaunchPlayer()
     {
         if (!canLaunch)
         {
             playerClick = true;
-            clickSign.color = Color.green;
-
             hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeAll;
-        
-            Debug.Log("Applied Troque to Player: " + force * 5000);
-        
-            Vector2 torq = (characterRigid.transform.up * (force * 5000));
-            characterRigid.AddForce(torq * (getTorqueDir() * -1));
+
+            Debug.Log("Applied Torque to Player: " + force * 5000);
+
+            Vector2 torque = characterRigid.transform.up * (force * 5000);
+            characterRigid.AddForce(torque * -GetTorqueDir());
         }
     }
 
-    public void RebotePared()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!playerClick)
+        if (collision.collider.CompareTag("Wall") && !playerClick)
         {
             Vector2 inverseForce = -hammerBottomRigid.velocity;
             hammerBottomRigid.AddForce(inverseForce, ForceMode2D.Impulse);
         }
-        
     }
-
-    public void onHammerHit(Collider2D asd)
-    {
-        characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-        launchPlayer();
-    }
-    
-    public void onPlayerHit()
-    {
-        canLaunch = true;
-        playerClick = false;
-        clickSign.color = Color.red;
-        hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-        force = 0;
-    }
-    
-    int getTorqueDir()
+    private int GetTorqueDir()
     {
         if (hammer.transform.position.x > character.transform.position.x)
         {
             return -1;
         }
         return 1;
+    }
+    
+    public void BounceOffWall()
+    {
+        if (!playerClick)
+        {
+            Vector2 inverseForce = -hammerBottomRigid.velocity;
+            hammerBottomRigid.AddForce(inverseForce, ForceMode2D.Impulse);
+        }
+    }
+
+    public void OnHammerHit(Collider2D collider)
+    {
+        characterRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+        LaunchPlayer();
+    }
+
+    public void OnPlayerHit()
+    {
+        canLaunch = true;
+        playerClick = false;
+        hammerUpRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+        force = 0;
     }
 }

@@ -8,6 +8,6 @@ public class PlayerDetector : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        player.onPlayerHit();
+        player.OnPlayerHit();
     }
 }

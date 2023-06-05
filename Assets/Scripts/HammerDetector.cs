@@ -10,12 +10,12 @@ public class HammerDetector : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         Debug.Log("Hammer Detect");
-        player.onHammerHit(col);
+        player.OnHammerHit(col);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         Debug.Log("Boing");
-        player.RebotePared();
+        player.BounceOffWall();
     }
 }
